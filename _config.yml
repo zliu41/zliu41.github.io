@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------
 
 # Site
-title: cofree cospirits
+title: Cofree Cospirits
 subtitle:
 description:
 author: Ziyang
@@ -173,13 +173,13 @@ font:
   global:
     # external: true will load this font family from host.
     external: true
-    family: Whitney-Book
+    family: Lato
 
   # Font settings for Headlines (h1, h2, h3, h4, h5, h6)
   # Fallback to `global` font settings.
   headings:
     external: true
-    family: Whitney-BookSC
+    family:
 
   # Font settings for posts
   # Fallback to `global` font settings.
@@ -192,7 +192,7 @@ font:
   # The `size` option use `px` as unit
   logo:
     external: true
-    family: Whitney-BookSC
+    family:
     size:
 
   # Font settings for <code> and code blocks.
@@ -697,6 +697,7 @@ vendors:
 css: assets/css
 js: assets/js
 images: assets/images
+fonts: assets/fonts
 
 # Theme version
 version: 5.1.1
