@@ -4,7 +4,7 @@ date: 2017-11-13
 ---
 
 
-When writing any non-trivial amount of code, we usually factor out the common logic or patterns to facilitate code reuse and avoid repeating. Recursion schemes is just about that. With recursion schemes you can factor out the recursion patterns in your code, so that you don't need to write the same types of recursion over and over again. This may sound a little magical to those who aren't familiar with recursion schemes, but it really isn't.
+When writing any non-trivial amount of code, we usually factor out the common logic or patterns to improve modularity, facilitate code reuse and avoid repeating ourselves. Recursion schemes is just about that. With recursion schemes you can factor out the recursion patterns in your code, so that you don't need to write the same types of recursion over and over again. This may sound a little magical to those who aren't familiar with recursion schemes, but it really isn't.
 
 This post aims to provide an absolutely elementary introduction to recursion schemes using Scala. There are a few good introductory posts on recursion schemes in Haskell, but I haven't seen one for Scala, so here we go.
 
