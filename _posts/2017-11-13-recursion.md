@@ -18,31 +18,22 @@ Recursion schemes are based on fixpoints (also known as fixed points). So before
 
 ## Fixpoint Combinator
 
-One of my previous posts, [The fix Combinator in Scalaz](http://free.cofree.io/2017/08/28/fixpoint/), contains an introduction of the fixpoint combinator. A fixpoint combinator `fix` is a combinator such that for all functions `f`, `fix(f) = f(fix(f))`. In other words, `fix(f)` is the fixpoint of `f`. This allows you to convert a recursive function into a non-recursive function, by delegating the recursion to `fix`. The way to do it is: suppose you have a recursive function `f`:
+One of my previous posts, [The fix Combinator in Scalaz](http://free.cofree.io/2017/08/28/fixpoint/), contains an introduction of the fixpoint combinator. A fixpoint combinator `fix` is a combinator such that for all functions `f`, `fix(f) = f(fix(f))`. In other words, `fix(f)` is a fixpoint of `f` (more precisely, it is the _least_
+fixpoint of `f`). This allows you to convert a recursive value into a non-recursive one, by delegating the recursion to `fix`. The way to do it is: suppose you have a recursive value `f`:
 
 ```
-f(params) = <body containing f>
+f = <body containing f>
 ```
 
-Create a function `g` that takes `f` itself and `f`'s parameters as its parameters, with the same body as `f`:
+Define `<body containing f>` as `g(f)`, i.e.,
 
 ```
-g(f)(params) = <body containing f>
+g(f) = <body containing f>
 ```
 
-Now, `g` is no longer recursive because its body doesn't contain `g`. But in order to use `g`, we need to find an `f` that we can feed to `g`. How do we find it? Suppose what we want to find is `x`. By feeding it to `g`, we get
-
-```
-g(x)(params) = <body containing x>
-```
-
-So `g(x)` is a function that takes `f`'s parameters, and returns `<body containing x>`. Since `g(x)` should be equivalent as `f`, we should have
-
-```
-g(x)(params) = <body containing g(x)>
-```
-
-which means we need an `x` such that `x = g(x)`. Therefore, one possible `x` is `fix(g)`. This is how you use the fixpoint combinator to factor recursion out of a recursive function, leaving only the "core logic" in the original function.
+Now we have `f = g(f)`, so `f` is a fixpoint of `g`. And it happens to be the least fixpoint of `g`, hence `f = fix(g)`.
+Note that `g` is no longer recursive because its body doesn't contain `g`. This is how you use the fixpoint combinator to factor recursion
+out of a recursive function, leaving only the "core logic" in the original function.
 
 ## Fixpoint Type
 
@@ -57,18 +48,18 @@ That is, given a `Fix` of `F`, you can always get an `F` of `Fix[F]`, and vice v
 Suppose you have a recursive type `F`:
 
 ```scala
-sealed trait F[Params]
-final case class A[Params](a: <type containing F>) extends F[Params]
+sealed trait F
+final case class A(a: <type containing F>) extends F
 ```
 
-You can create a type `G` that takes `F` itself and `F`'s type parameters as its type parameters:
+Similar as what we did at the value level, define `F` as `G[F]`:
 
 ```scala
-sealed trait G[F, Params]
-final case class GA[F, Params](a: <type containing F>) extends G[F, Params]
+sealed trait G[F]
+final case class GA[F](a: <type containing F>) extends G[F]
 ```
 
-Then, `Fix[G]` is a type isomorphic to `F`, but without the explicit recursion as `F` does (note that this is not quite accurate - Scala does not support partially applied types so you cannot directly write `Fix[G]` - but for the purpose of this explanation you can temporarily assume that it does).
+Then, `Fix[G]` is a type isomorphic to `F`, but without the explicit recursion as `F` does.
 
 Recursion schemes is all about fixpoint types. Next let's review a few different types of recursion schemes using the factorial example.
 
