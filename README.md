@@ -1,1 +1,1 @@
-Welcome to my blog, [free.cofree.io](http://free.cofree.io). Most, if not all, of the posts will be about Scala.
+Welcome to my blog, [free.cofree.io](https://free.cofree.io).
