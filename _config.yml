@@ -368,15 +368,6 @@ mathjax:
 # Han Support docs: https://hanzi.pro/
 han: false
 
-# Swiftype Search API Key
-#swiftype_key:
-
-# Baidu Analytics ID
-#baidu_analytics:
-
-# Duoshuo ShortName
-#duoshuo_shortname:
-
 # Disqus
 disqus:
   enable: true
@@ -397,26 +388,6 @@ changyan:
   enable: false
   appid:
   appkey:
-
-# Support for youyan comments system.
-# You can get your uid from http://www.uyan.cc
-#youyan_uid: your uid
-
-# Support for LiveRe comments system.
-# You can get your uid from https://livere.com/insight/myCode (General web site)
-#livere_uid: your uid
-
-# Baidu Share
-# Available value:
-#    button | slide
-# Warning: Baidu Share does not support https.
-#baidushare:
-##  type: button
-
-# Share
-#jiathis:
-# Warning: JiaThis does not support https.
-#add_this_id:
 
 # Share
 duoshuo_share: true
