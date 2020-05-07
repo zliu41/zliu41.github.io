@@ -8,7 +8,8 @@ recognize when writing Haskell. The intended audience include inexperienced Hask
 experienced Haskell programmers who feel like refreshing their memory. The bullet list hopefully makes things reasonably
 easy to digest, and helps you eat Haskell string types for breakfast.
 
-Haskell has five string types: `String`, strict and lazy `Text`, and strict and lazy `ByteString`. The following is
+Haskell has five commonly used string types: `String`, strict and lazy `Text`, and strict and lazy `ByteString`[^1]. Some recommand
+against calling `ByteString` a string type, The following is
 roughly in the order of `String`, `Text`, `ByteString`.
 
 - `String` is, in some sense, the "official" string type, since it is the only string type in `base` (and of course,
@@ -47,14 +48,10 @@ character occupies either 2 or 4 bytes (plus some constant overhead for each `Te
 
 - If you are familiar with Java, it might be helpful to think of lazy `Text` as `LinkedList<ArrayList<Byte>>` (except that the
 `LinkedList` is a lazy cons-list), where each `ArrayList<Byte>` is a chunk, and the `LinkedList` is the spine.
-This gets the benefits of both `LinkedList` and `ArrayList`: it supports efficient _O(1)_ concatenation because `LinkedList`
+This gets the benefits of both `LinkedList` and `ArrayList`: it supports efficient _O(1)_ concatenation[^2] because `LinkedList`
 concatenation is _O(1)_; it also is more space efficient and has better locality
 than a flat `LinkedList<Byte>`, because `ArrayList` is stored contiguously in memory
 and there's no pointer from a node to the next.
-
-  (Concatenation of two lazy `Text`s is not actually _O(1)_ because Haskell's cons-list doesn't support _O(1)_ concatenation.
-  It is _O(c<sub>1</sub>)_ where _c<sub>1</sub>_ is the number of chunks in the first `Text`. It is still a much better asymptotic than concatenating
-  two strict `Text`s, which is _O(n<sub>1</sub> + n<sub>2</sub>)_ where _n<sub>1</sub>_ and _n<sub>2</sub>_ are the lengths of the two `Text`s)
 
   - Some have argued that it is better to use a _strict_ list/rope of chunks for lazy `Text`, which would be more comparable to
   Java's `LinkedList<ArrayList<Byte>>`. The advantage is that this can potentially unify strict and lazy `Text` into
@@ -96,7 +93,7 @@ and there's no pointer from a node to the next.
   So these two approaches are dual of each other. In both cases, a list is represented in a "delayed" form,
   and operations such as `map` simply "remembers" the function
   to be mapped, rather than actually performing the mapping and generating a new list. The pros and cons of the two
-  approaches is out of the scope of this blog post, but [this paper](http://fun.cs.tufts.edu/stream-fusion.pdf) have more details
+  approaches is out of the scope of this blog post, but [this paper](http://fun.cs.tufts.edu/stream-fusion.pdf) has more details
   if you are interested.
 
   In the case of `Text`, it employs stream fusion. Each eligible operation `op` is turned into `fromStream . opOnStream . toStream`,
@@ -108,8 +105,8 @@ To convert a `ByteString` to/from `Text`, you need to specify which encoding you
 use the conversion functions in `Data.Text.Encoding`.
 
 - Like `Text`, strict `ByteString` is backed by a byte array, and lazy `ByteString` is backed by a cons-list of chunks, each
-of which is a strict `ByteString`. One difference is that strict `ByteString` is not actually implemented using Haskell
-arrays, but a `ForeignPtr Word8`. This makes it directly usable in FFI because it has the same memory layout as
+of which is a strict `ByteString`. One difference is that strict `ByteString` uses a `ForeignPtr Word8` as the
+underlying data structure. This makes it directly usable in FFI because it has the same memory layout as
 an `unsigned char *` in C (note that a `char` in C is a byte, not a unicode code point).
   - To pass a `ByteString` to a C function, you just need to do two things: (1) make a copy of it (because otherwise the C function may
   mutate it), and (2) append a null (0x00) byte, since C strings are null-terminated. This is exactly what `Data.ByteString.useAsCString` does.
@@ -154,3 +151,9 @@ of why fusion is no longer used.
 - To learn more about fixed points, recursion schemes, `Mu`, `Nu` and what not, check out the [_recursion-schemes_](https://hackage.haskell.org/package/recursion-schemes)
   and the [_yaya_](https://hackage.haskell.org/package/yaya) library, and [my previous blog post](https://free.cofree.io/2019/08/21/mu-nu/) on this topic.
 - To learn more about `ShortByteString`, check out Mark Karpov's blog post, [_Short ByteString and Text_](https://markkarpov.com/post/short-bs-and-text.html).
+
+---
+
+[^1]: I should remark that `ByteString` is technically not a string type, because a string is a sequence of characters, and `ByteString` is a sequence of bytes - it has no notion of characters. So "ByteString" is perhaps not the most fitting name. It is, however, appropriate to discuss `ByteString` together with `String` and `Text`, since the correct choice among these types is often a point of confusion.
+
+[^2]: Concatenation of two lazy `Text`s is not actually _O(1)_ because Haskell's cons-list doesn't support _O(1)_ concatenation.It is _O(c<sub>1</sub>)_ where _c<sub>1</sub>_ is the number of chunks in the first `Text`. It is still a much better asymptotic than concatenating two strict `Text`s, which is _O(n<sub>1</sub> + n<sub>2</sub>)_ where _n<sub>1</sub>_ and _n<sub>2</sub>_ are the lengths of the two `Text`s.
