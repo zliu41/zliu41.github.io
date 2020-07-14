@@ -141,7 +141,7 @@ convert a lazy `Text` into a stream, but the converse is not true because the st
 strict or lazy. Here's [the author's explanation](https://github.com/haskell/bytestring/issues/81#issuecomment-244082219)
 of why fusion is no longer used.
 
-- The byteString package also has a `ShortByteString` type. It can be a good option if you need to keep a large number of small `ByteString`s around.
+- The bytestring package also has a `ShortByteString` type. It can be a good option if you need to keep a large number of small `ByteString`s around.
 
 # Further Reading
 
