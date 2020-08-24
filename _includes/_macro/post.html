@@ -229,14 +229,22 @@
               {% endif %}
 
               {% if site.post_wordcount.min2read %}
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <span class="post-meta-item-icon">
                   <i class="fa fa-clock-o"></i>
                 </span>
                 {% if site.post_wordcount.item_text %}
                   <span class="post-meta-item-text">{{ __.post.min2read }}</span>
                 {% endif %}
-                <span title="{{ __.post.min2read }}">
-                  {{ post.content | number_of_words | divided_by: 200 }}
+                <span class="reading-time" title="Estimated read time">
+                  {% capture words %}
+                    {{ post.content | number_of_words | minus: 480 }}
+                  {% endcapture %}
+                  {% if words contains '-' %}
+                  1 min
+                  {% else %}
+                  {{ words | divided_by: 240 | plus: 2 }} mins
+                  {% endif %}
                 </span>
               {% endif %}
             </div>

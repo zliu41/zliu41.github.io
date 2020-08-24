@@ -307,16 +307,16 @@ auto_excerpt:
 
 # Post meta display settings
 post_meta:
-  item_text: true
+  item_text: false
   created_at: true
   updated_at: false
   categories: false
 
 # Post wordcount display settings
 post_wordcount:
-  item_text: true
+  item_text: false
   wordcount: false
-  min2read: false
+  min2read: true
   separated_meta: true
 
 # Wechat Subscriber
