@@ -3,7 +3,9 @@ title: About
 layout: page
 ---
 
-I am a Haskell engineer, currently working at Kitty Hawk. I live in the San Francisco bay area.
+I am a Haskell engineer, currently working at Kitty Hawk and living in the San Francisco bay area.
+I came across Haskell in 2017, more or less by accident, and after being completely fascinated
+by it, started writing Haskell professionally in 2018.
 This blog contains some random Haskell topics I happen to find worth writing about.
 
 Besides Haskell I'm passionate about a few other things:
