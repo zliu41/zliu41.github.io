@@ -11,7 +11,7 @@ This blog contains some random Haskell topics I happen to find worth writing abo
 Besides Haskell I'm passionate about a few other things:
 
 - Snooker, which is by far my biggest hobby. Below is my son "playing" snooker, and
-my John Parris ultimate cue.
+my John Parris Ultimate cue.
 - Commercial aviation and frequent flyer programs.
 - Gambling - blackjack, video poker, ultimate texas holdem, and what not.
 
