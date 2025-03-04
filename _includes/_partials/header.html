@@ -11,13 +11,11 @@
 
     <div class="custom-logo-site-title">
       <a href="{{ '/' | relative_url}}"  class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
         <span class="site-title">{{ site.title }}</span>
-        <span class="logo-line-after"><i></i></span>
       </a>
     </div>
       {% if site.seo %}
-        <h1 class="site-subtitle" itemprop="description">{{ site.subtitle }}</h1>
+        <h1 class="site-subtitle" itemprop="description" style="text-align: right;">{{ site.subtitle }}</h1>
       {% else %}
         <p class="site-subtitle">{{ site.subtitle }}</p>
       {% endif %}
