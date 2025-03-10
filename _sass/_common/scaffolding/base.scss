@@ -14,7 +14,7 @@ body {
 
   @include mobile() { padding-right: 0 !important; }
   @include tablet() { padding-right: 0 !important; }
-  @include desktop-large() { font-size: $font-size-large; }
+  @include desktop-large() { font-size: $font-size-main-text; }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -29,7 +29,7 @@ h2, h3, h4, h5, h6 { margin: 20px 0 15px; }
 
 @for $headline from 1 through 6 {
   h#{$headline} {
-    font-size: $font-size-headings-base - $font-size-headings-step * $headline;
+    font-size: $font-size-headings-base - $font-size-headings-step * ($headline - 1) * 3;
   }
 
   @include mobile() {

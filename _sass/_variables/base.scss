@@ -95,6 +95,7 @@ $font-size-base           : 14px;
 $font-size-small          : $font-size-base - 2px;
 $font-size-smaller        : $font-size-base - 4px;
 $font-size-large          : $font-size-base + 2px;
+$font-size-main-text      : $font-size-base + 3px;
 $font-size-larger         : $font-size-base + 4px;
 
 
@@ -193,7 +194,7 @@ $main-desktop                   : 960px;
 $main-desktop-large             : 1200px;
 
 $content-desktop                : 700px;
-$content-desktop-large          : 900px;
+$content-desktop-large          : 1000px;
 $content-desktop-padding        : 40px;
 
 $sidebar-desktop                : 240px;
