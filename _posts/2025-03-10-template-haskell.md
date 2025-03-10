@@ -1,5 +1,5 @@
 ---
-title: "Stage Fright Peeled Away: Stage Errors in Template Haskell Explained"
+title: "Stage Fright Peeled Away: Writing the 'peel' Function with Template Haskell"
 date: 2025-03-10
 ---
 
