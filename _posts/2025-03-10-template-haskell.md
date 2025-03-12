@@ -16,7 +16,7 @@ This post starts with an explanation of stages and stage errors, and then applie
 # Stage Errors Explained
 
 TH revolves around two key concepts: quotations (`[| ... |]` and look-alikes) convert code into abstract syntax trees (ASTs) for manipulation, while splices (`$(...)` or `$$(...)`) do the reverse - turning ASTs back into code that can be combined with the surrounding code.
-This post focuses on typed expression quotations, `[|| ... ||]`, which turns code into `Code Q a`, and typed expression splices, `$$(...)`, which convert `Code Q a` back into code.
+This post focuses on typed expression quotations, `[|| ... ||]`, which turns code into `CodeQ a`, and typed expression splices, `$$(...)`, which convert `CodeQ a` back into code.
 All of the following also applies to untyped expression quotations (`[| ... |]`) and untyped splices (`$(...)`).
 The rules are similar but slightly different for other kinds of quotations - type, pattern and declaration quotations.
 We won't cover these to keep things short.
@@ -108,6 +108,7 @@ lengthPeeled xs =
         [] -> 0
         z:zs -> 1 +
           case zs of
+            [] -> 0
             w:ws -> 1 + fix step ws
   where
     step = -- same as above
@@ -149,7 +150,7 @@ lengthPeeled_2 :: forall a. [a] -> Int
 lengthPeeled_2 = $$(peel_2 3 step)
 ```
 
-And this means `peel_2` must return `Code Q (a -> b)`, rather than `a -> b`.
+And this means `peel_2` must return `CodeQ (a -> b)`, rather than `a -> b`.
 But what should the argument types of `peel_2` be?
 Can it still take `Int` and `(a -> b) -> a -> b`?
 Let's give it a try.
@@ -157,7 +158,7 @@ The only way to write `peel_2` with such a type would be
 
 ```haskell
 -- Attempt 2 - doesn't even compile
-peel_2 :: Int -> ((a -> b) -> a -> b) -> Code Q (a -> b)
+peel_2 :: Int -> ((a -> b) -> a -> b) -> CodeQ (a -> b)
 peel_2 0 f = [|| fix f ||]
 ```
 
@@ -168,11 +169,11 @@ Note that there's no problem with `fix` being used at level 1, since it is impor
 ## Attempt 3: also put peel's second argument in a splice
 
 It should be clear by now that since `f` is neither a top-level variable nor can it be lifted, to avoid violating rule #4, `f` must be used at level 0.
-The more obvious way to achieve this is to make `peel` take `Code Q ((a -> b) -> a -> b)` as the second argument:
+The more obvious way to achieve this is to make `peel` take `CodeQ ((a -> b) -> a -> b)` as the second argument:
 
 ```haskell
 -- Attempt 3 - still not quite right
-peel_3 :: Int -> Code Q ((a -> b) -> a -> b) -> Code Q (a -> b)
+peel_3 :: Int -> CodeQ ((a -> b) -> a -> b) -> CodeQ (a -> b)
 peel_3 0 f = [|| fix $$f ||]
 peel_3 n f = [|| $$f $$(peel_3 (n - 1) f) ||]
 ```
@@ -185,7 +186,7 @@ Note that due to rule #4, `lengthPeeled_3` must be placed in a different module 
 ```haskell
 lengthPeeled_3 :: forall a. [a] -> Int
 lengthPeeled_3 =
-  $$( let step :: Code Q (([a] -> Int) -> [a] -> Int)
+  $$( let step :: CodeQ (([a] -> Int) -> [a] -> Int)
           step = [|| \self xs -> case xs of [] -> 0; y:ys -> 1 + self ys ||]
        in peel_3 3 step
     )
@@ -236,11 +237,11 @@ peel_4 k f = f (peel_4 (k-1) f) -- no quotation or splice - everything is at lev
 ```
 
 This appears identical to attempt 1, but only at the term level.
-The types are very different, since `peel_4` needs to return `Code Q (a -> b)`.
+The types are very different, since `peel_4` needs to return `CodeQ (a -> b)`.
 In order for the types to align correctly, `peel_4`'s type needs to be
 
 ```haskell
-peel_4 :: Int -> (Code Q (a -> b) -> Code Q (a -> b)) -> Code Q (a -> b)
+peel_4 :: Int -> (CodeQ (a -> b) -> CodeQ (a -> b)) -> CodeQ (a -> b)
 ```
 
 What about the `peel_4 0 f` case?
@@ -257,13 +258,35 @@ And once again, guided by the types and the knowledge of stage errors, it is rel
 ```haskell
 lengthPeeled_4 :: forall a. [a] -> Int
 lengthPeeled_4 =
-  $$( let step :: Code Q ([a] -> Int) -> Code Q ([a] -> Int)
-          step = \self -> [|| \xs -> case xs of [] -> 0; y:ys -> 1 + $$self xs ||]
+  $$( let step :: CodeQ ([a] -> Int) -> CodeQ ([a] -> Int)
+          step = \self -> [|| \xs -> case xs of [] -> 0; y:ys -> 1 + $$self ys ||]
        in peel_4 3 step
     )
 ```
 
 This produces exactly the code we want.
+
+-----------------------
+Update (03/11/2025) : a reader (_AndrasKovacs_ on Reddit) pointed out another alternative, using a custom `fix` rather than the standard one from `base`:
+
+```haskell
+peel_5 :: Int -> ((CodeQ a -> CodeQ b) -> CodeQ a -> CodeQ b) -> CodeQ (a -> b)
+peel_5 k f = [||\a -> $$(go k f [||a||])||]
+  where
+    go :: Int -> ((CodeQ a -> CodeQ b) -> CodeQ a -> CodeQ b) -> CodeQ a -> CodeQ b
+    go 0 f a = [||let body a = $$(f (\a -> [||body $$a||]) [||a||]) in body $$a||]
+    go k f a = f (go (k - 1) f) a
+
+lengthPeeled_5 :: forall a. [a] -> Int
+lengthPeeled_5 =
+  $$( let step :: (Code Q [a] -> Code Q Int) -> Code Q [a] -> Code Q Int
+          step = \self xs -> [|| case $$xs of [] -> 0; y:ys -> $$(self [|| ys ||]) ||]
+       in peel 3 step
+    )
+```
+
+This generates more optimized code that performs additional beta reductions when compiling with `-O0`.
+It would be a good exercise to try to figure out why.
 
 ---
 
