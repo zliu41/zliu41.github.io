@@ -1,0 +1,3 @@
+---
+name: 'Registration & Coffee'
+---
