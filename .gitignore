@@ -1,4 +1,4 @@
 **/.DS_Store
-_site/**/**
-.jekyll-metadata
-.jekyll-cache
+**/_site/**/**
+**/.jekyll-metadata
+**/.jekyll-cache
